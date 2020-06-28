@@ -19,12 +19,12 @@ export function sortStrings(arr, param = 'asc') {
       return -1;
     }
 
-    a.codePointAt(0) > b.codePointAt(0) {
-      return -1
+    if (a.codePointAt(0) > b.codePointAt(0)) {
+      return 1
     }
 
-    b.codePointAt(0) > a.codePointAt(0) {
-      return 1
+    if (b.codePointAt(0) > a.codePointAt(0)) {
+      return -1
     }
 
     return 0;
