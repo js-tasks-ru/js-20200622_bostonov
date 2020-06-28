@@ -7,4 +7,5 @@
 export const omit = (obj, ...fields) => {
   let elements = Object.entries(obj).filter((item, index, array) => !fields.includes(item[0])).map(([key, value]) => [key, value]);
   return Object.fromEntries(elements);
+  
 };
