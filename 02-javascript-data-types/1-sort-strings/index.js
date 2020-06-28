@@ -23,6 +23,11 @@ export function sortStrings(arr, param = 'asc') {
         return -1
       }
 
+      b.codePointAt(0) > a.codePointAt(0)
+      {
+        return 1
+      }
+
       return 0;
     };
 
