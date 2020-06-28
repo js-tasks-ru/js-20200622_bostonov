@@ -5,9 +5,6 @@
  * @returns {string[]}
  */
 export function sortStrings(arr, param = 'asc') {
-  console.log(arr);
-  console.log(param);
-
   let sorter1 = function (a, b) {
       let x = a.toLowerCase();
       let y = b.toLowerCase();
