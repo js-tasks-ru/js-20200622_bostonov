@@ -4,6 +4,7 @@
  * @param {string} [param="asc"] param - the sorting type "asc" or "desc"
  * @returns {string[]}
  */
+
 export function sortStrings(arr, param = 'asc') {
   let sorter1 = function(a, b) {
     let x = a.toLowerCase();
