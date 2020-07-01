@@ -5,4 +5,18 @@
  */
 export function createGetter(path) {
 
+  const properties = path.split('.');
+
+  let innerGetter = function(obj) {
+    let currentProperty = properties.shift();
+
+    if (properties.length === 0) {
+      return obj[currentProperty];
+    } else {
+      let { [currentProperty]: subObject } = obj;
+      return subObject === undefined ? subObject : innerGetter(subObject);
+    }    
+  };
+
+  return innerGetter;
 }
