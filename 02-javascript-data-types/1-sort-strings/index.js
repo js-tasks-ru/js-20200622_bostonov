@@ -6,40 +6,16 @@
  */
 
 export function sortStrings(arr, param = 'asc') {
-  let sorter1 = function(a, b) {
-    let x = a.toLowerCase();
-    let y = b.toLowerCase();
-    x = x.replace('ё', 'е');
-    y = y.replace('ё', 'е');
-
-    if (x > y) {
-      return 1;
-    }
-    if (y > x) {
-      return -1;
-    }
-
-    if (a.codePointAt(0) > b.codePointAt(0)) {
-      return 1
-    }
-
-    if (b.codePointAt(0) > a.codePointAt(0)) {
-      return -1
-    }
-
-    return 0;
+  const obj = {
+    asc: 1,
+    desc: -1
   };
 
-  switch (param) {
-    case 'asc':
-      arr.sort(sorter1);
-      break;
-    case 'desc':
-      arr.sort(sorter1);
-      arr.reverse();
-      break;
-    default:
-  }
+  const sorted = [...arr].sort((a, b) => {
+    return obj[param] * a.localeCompare(b, [], {
+      caseFirst: 'upper'
+    });
+  });
 
-  return arr.slice();
+  return sorted;
 }
