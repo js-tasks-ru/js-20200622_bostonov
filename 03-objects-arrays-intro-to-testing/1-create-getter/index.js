@@ -10,12 +10,12 @@ export function createGetter(path) {
   let innerGetter = function(obj) {
     let currentProperty = properties.shift();
 
-    if (properties.length === 0) {
+    if (!properties.length) {
       return obj[currentProperty];
     } else {
-      let { [currentProperty]: subObject } = obj;
+      const { [currentProperty]: subObject } = obj;
       return subObject === undefined ? subObject : innerGetter(subObject);
-    }    
+    }
   };
 
   return innerGetter;
