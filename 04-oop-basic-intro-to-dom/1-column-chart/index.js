@@ -33,12 +33,11 @@ export default class ColumnChart {
   }
 
   render() {
-    let template = '';
     const element = document.createElement('div');
 
     const recalculatedValues = this.getColumnProps(this.data);
     const dataBlock = recalculatedValues.map(item => `<div style="--value:${item.value}" data-tooltip="${item.percent}"></div>`).join('');
-    template = `
+    const template = `
         <div class="column-chart column-chart_loading" style="--chart-height: ${this.chartHeight}">
             <div class="column-chart__title">
             ${this.label} ${this.getLink()}
