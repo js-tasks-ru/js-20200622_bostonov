@@ -2,11 +2,11 @@ export default class ColumnChart {
   element = null;
   chartHeight = 50;
 
-  constructor({data=[], label = '', value = '%'} = {}) {
-    this.noInputObject = arguments.length === 0;
+  constructor({data = [], label = '', value = '%', link = ''} = {}) {
     this.data = data;
     this.label = label;
     this.value = value;
+    this.link = link;
 
     this.render();
   }
@@ -23,6 +23,10 @@ export default class ColumnChart {
     });
   }
 
+  getLink() {
+    return this.link ? `<a href="${this.link}" class="column-chart__link">View all</a>` : ``;
+  }
+
   update({bodyData} = {}) {
     this.data = bodyData;
     this.render();
@@ -32,14 +36,12 @@ export default class ColumnChart {
     let template = '';
     const element = document.createElement('div');
 
-    if (!this.noInputObject)
-    {
-      const recalculatedValues = this.getColumnProps(this.data);
-      const dataBlock = recalculatedValues.map(item => `<div style="--value:${item.value}" data-tooltip="${item.percent}"></div>`).join('');
-      template = `
+    const recalculatedValues = this.getColumnProps(this.data);
+    const dataBlock = recalculatedValues.map(item => `<div style="--value:${item.value}" data-tooltip="${item.percent}"></div>`).join('');
+    template = `
+        <div class="column-chart column-chart_loading" style="--chart-height: ${this.chartHeight}">
             <div class="column-chart__title">
-            ${this.label}
-              <a href="/sales" class="column-chart__link">View all</a>
+            ${this.label} ${this.getLink()}
             </div>
             <div class="column-chart__container">
               <div class="column-chart__header">${this.value}</div>
@@ -47,31 +49,16 @@ export default class ColumnChart {
                 ${dataBlock}
               </div>
             </div>
+        </div>
           `;
-    }
-    else
-    {
-      template = `
-                  <div class="column-chart__title">
-                    Total orders
-                    <a class="column-chart__link" href="#">View all</a>
-                  </div>
-                  <div class="column-chart__container">
-                    <div data-element="header" class="column-chart__header">
-                      344
-                    </div>
-                    <div data-element="body" class="column-chart__chart">
-
-                    </div>
-                  </div>
-          `;
-      element.classList.add('column-chart');
-      element.classList.add('column-chart_loading');
-      element.style.innerHTML = `--chart-height: 50`;
-    }
 
     element.innerHTML = template;
-    this.element = element;
+    this.element = element.firstElementChild;
+
+    if (this.data.length)
+    {
+      this.element.classList.remove('column-chart_loading');
+    }
   }
 
   remove() {
