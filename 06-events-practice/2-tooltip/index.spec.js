@@ -34,7 +34,6 @@ describe('events-practice/tooltip', () => {
 
     expect(tooltip.element).toBeVisible();
     expect(tooltip.element).toBeInTheDocument();
-
     expect(tooltip.element).toHaveTextContent('bar-bar-bar');
   });
 

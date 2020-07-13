@@ -1,21 +1,30 @@
 export default class NotificationMessage {
-  static isRunning = false;
-  static timerId = null;
-  element = null;
+  static activeNotification;
+
 
   constructor(message, {duration = 0, type = 'success'} = {}) {
     this.message = message;
     this.duration = duration;
     this.type = type;
 
+    if (NotificationMessage.activeNotification) {
+      NotificationMessage.activeNotification.remove();
+    }
+
+    this.render();
+  }
+
+  render() {
     const element = document.createElement('div');
     element.innerHTML = this.template;
     this.element = element.firstElementChild;
+
+    NotificationMessage.activeNotification = this.element;
   }
 
   get template() {
     return `
-    <div class="notification ${this.type}" style="--value:20s">
+    <div class="notification ${this.type}" style="--value:${this.duration}ms">
     <div class="timer"></div>
     <div class="inner-wrapper">
       <div class="notification-header">${this.type}</div>
@@ -27,38 +36,23 @@ export default class NotificationMessage {
     `;
   }
 
-  show(parent) {
-    if (NotificationMessage.isRunning) {
-      if (NotificationMessage.timerId != null) {
-        clearTimeout(NotificationMessage.timerId);
-      }
-    }
+  show(parent = document.body) {
+    parent.append(this.element);
 
-    this.remove();
-
-    if (parent !== undefined) {
-      parent.append(this.element)
-    } else {
-      document.body.append(this.element);
-    }
-
-    NotificationMessage.isRunning = true;
-
-    NotificationMessage.timerId = setTimeout(() => {
+    setTimeout(() => {
       this.remove();
-      NotificationMessage.isRunning = false;
-    }, this.duration - 1000);
+    }, this.duration);
+
+    return this.element;
   }
 
   remove() {
-    const element = document.getElementsByClassName('notification')[0];
-    if (element !== undefined) {
-      element.remove();
-    }
+    this.element.remove();
   }
 
   destroy() {
     this.remove();
+    NotificationMessage.activeNotification = null;
   }
 
 }
