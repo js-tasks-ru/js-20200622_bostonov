@@ -10,7 +10,14 @@
   <script type="module">
     import DoubleSlider from './index.js';
 
-    const slider = new DoubleSlider();
+    let obj = {
+      min: 400, max: 600, selected : {
+        from: 400,
+        to: 600
+      }, formatValue: value => '$' + value
+    }
+
+    const slider = new DoubleSlider(obj);
 
     root.append(slider.element);
   </script>
