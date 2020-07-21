@@ -3,7 +3,7 @@ import fetchJson from './utils/fetch-json.js';
 const BACKEND_URL = 'https://course-js.javascript.ru';
 
 export default class ColumnChart {
-  element = null;
+  element;
   subElements = {};
   chartHeight = 50;
 
@@ -17,65 +17,39 @@ export default class ColumnChart {
                   to: new Date(),
                 }
               } = {}) {
-    this.url = new URL(url, BACKEND_URL)
+
+    this.url = new URL(url, BACKEND_URL);
     this.range = range;
     this.label = label;
     this.link = link;
     this.formatHeading = formatHeading;
 
     this.render();
+    this.loadData(this.range.from, this.range.to);
   }
-
-  getColumnProps(data) {
-    const maxValue = Math.max(...data);
-    const scale = 50 / maxValue;
-
-    return data.map(item => {
-      return {
-        percent: (item / maxValue * 100).toFixed(0) + '%',
-        value: String(Math.floor(item * scale))
-      };
-    });
-  }
-
-  getLink() {
-    return this.link ? `<a href="${this.link}" class="column-chart__link">View all</a>` : ``;
-  }
-
-  // update({bodyData} = {}) {
-  //   this.data = bodyData;
-  //   this.render();
-  // }
 
   render() {
-    const {from, to} = this.range;
-
     const element = document.createElement('div');
 
-    //const recalculatedValues = this.getColumnProps(this.data);
-    //const dataBlock = recalculatedValues.map(item => `<div style="--value:${item.value}" data-tooltip="${item.percent}"></div>`).join('');
-    const template = `
-        <div class="column-chart column-chart_loading" style="--chart-height: ${this.chartHeight}">
-            <div class="column-chart__title">
-            ${this.label} ${this.getLink()}
-            </div>
-            <div class="column-chart__container">
-              <div data-element="header" class="column-chart__header"></div>
-              <div data-element="body" class="column-chart__chart">
-              </div>
-            </div>
+    element.innerHTML = `
+      <div class="column-chart column-chart_loading" style="--chart-height: ${this.chartHeight}">
+        <div class="column-chart__title">
+          Total ${this.label}
+          ${this.getLink()}
         </div>
-          `;
+        <div class="column-chart__container">
+          <div data-element="header" class="column-chart__header"></div>
+          <div data-element="body" class="column-chart__chart"></div>
+        </div>
+      </div>
+    `;
 
-    element.innerHTML = template;
     this.element = element.firstElementChild;
     this.subElements = this.getSubElements(this.element);
+  }
 
-    this.loadData(from, to);
-
-    // if (this.data.length) {
-    //   this.element.classList.remove('column-chart_loading');
-    // }
+  getHeaderValue(data) {
+    return this.formatHeading(Object.values(data).reduce((accum, item) => (accum + item), 0));
   }
 
   async loadData(from, to) {
@@ -95,17 +69,12 @@ export default class ColumnChart {
       this.subElements.body.innerHTML = this.getColumnBody(data);
 
       this.element.classList.remove('column-chart_loading');
-      ;
     }
   }
 
   setNewRange(from, to) {
     this.range.from = from;
     this.range.to = to;
-  }
-
-  getHeaderValue(data) {
-    return this.formatHeading(Object.values(data).reduce((accum, item) => (accum + item), 0));
   }
 
   getColumnBody(data) {
@@ -115,13 +84,17 @@ export default class ColumnChart {
       const scale = this.chartHeight / maxValue;
       const percent = (value / maxValue * 100).toFixed(0);
       const tooltip = `<span>
-                <small>${key.toLocaleString('default', {dateStyle: 'medium'})}</small>
-                <br>
-                <strong>${percent}%</strong>>
-                </span>`;
-      return `<div style="--value: ${Math.floor(value * scale)}" data-tooltip="${tooltip}"/>`
+        <small>${key.toLocaleString('default', {dateStyle: 'medium'})}</small>
+        <br>
+        <strong>${percent}%</strong>
+      </span>`;
 
+      return `<div style="--value: ${Math.floor(value * scale)}" data-tooltip="${tooltip}"></div>`;
     }).join('');
+  }
+
+  getLink() {
+    return this.link ? `<a class="column-chart__link" href="${this.link}">View all</a>` : '';
   }
 
   getSubElements(element) {
@@ -138,11 +111,7 @@ export default class ColumnChart {
     return await this.loadData(from, to);
   }
 
-  remove() {
-    this.element.remove();
-  }
-
   destroy() {
-    this.remove();
+    this.element.remove();
   }
 }
