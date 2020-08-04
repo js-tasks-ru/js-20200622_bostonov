@@ -31,7 +31,7 @@ export default class ProductForm {
     fileInput.type = 'file';
     fileInput.accept = 'image/*';
 
-    fileInput.onchange = async () => {
+    fileInput.addEventListener('change', async () => {
       const [file] = fileInput.files;
 
       if (file) {
@@ -56,12 +56,10 @@ export default class ProductForm {
         uploadImage.classList.remove('is-loading');
         uploadImage.disabled = false;
 
-        // Remove input from body
         fileInput.remove();
       }
-    };
+    });
 
-    // must be in body for IE
     fileInput.hidden = true;
     document.body.appendChild(fileInput);
     fileInput.click();
